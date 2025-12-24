@@ -1,0 +1,17 @@
+{
+  "cmd_directory": "D:\\tools",
+  "commands": {
+    "func1": "text:Hello, world!",
+    "func2": "text:Thank you",
+    "func3": "text:1234",
+    "func4": "text:abcdefg",
+    "func5": "cmd:start.cmd",
+    "func6": "cmd:end.cmd",
+    "func7": "cmd:refresh.cmd",
+    "func8": "",
+    "func9": "",
+    "func10": "",
+    "func11": "",
+    "func12": ""
+  }
+} 
