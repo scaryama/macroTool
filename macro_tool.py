@@ -12,15 +12,17 @@ import os
 def load_config():
     config_path = "config.json"
     if os.path.exists(config_path):
-        with open(config_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"config.json 로드 중 오류 발생: {e}")
+            return None
     else:
         print("config.json 파일을 찾을 수 없습니다.")
         return None
 
-config = load_config()
 keyboard_controller = keyboard.Controller()
-cmd_directory = config["cmd_directory"]
 
 def type_text(text):
     # 텍스트를 클립보드에 복사
@@ -42,12 +44,22 @@ def play_sound():
 
 def create_func(func_name):
     def func():
-        if not config or func_name not in config["commands"]:
+        config = load_config()
+        if not config or func_name not in config.get("commands", {}):
             return
         
+        cmd_directory = config.get("cmd_directory", ".")
         command = config["commands"][func_name]
-        if len(command) > 0:
+        
+        # mute 설정 확인: 명령어 앞에 "mute:"가 붙어 있으면 소리 재생 안 함
+        should_play_sound = True
+        if command.startswith("mute:"):
+            should_play_sound = False
+            command = command[5:]  # "mute:" 제거
+            
+        if should_play_sound and len(command) > 0:
             play_sound()
+            
         if command.startswith("cmd:"):
             cmd_path = command[4:]  # "cmd:" 제거
             subprocess.Popen(cmd_path, shell=True, cwd=cmd_directory, encoding='cp949')
